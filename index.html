@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Nightwatch Feed Aggregator</title>
+ <style> 
+ body {
+  background-color: #0b0c10;
+  color: #66fcf1;
+  font-family: "Orbitron", sans-serif;
+  text-align: center;
+}
+h1 {
+  text-shadow: 0 0 10px #45a29e;
+}
+.feed-item {
+  background: #1f2833;
+  border: 1px solid #45a29e;
+  margin: 10px auto;
+  width: 80%;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 8px #45a29e;
+}
+a {
+  color: #c5c6c7;
+  text-decoration: none;
+}
+a:hover {
+  color: #66fcf1;
+}
+</style>
+</head>
+<body>
+  <h1>Nightwatch Console</h1>
+  <p>Scanning Washington D.C. for live alerts...</p>
+  <div id="feed"></div>
+
+  <script>
+    async function loadFeed() {
+      const res = await fetch("/api/FetchFeeds");
+      const data = await res.json();
+      const feedDiv = document.getElementById("feed");
+      feedDiv.innerHTML = data.map(item => `
+        <div class="feed-item">
+          <h3>${item.title}</h3>
+          <small>${new Date(item.pubDate).toLocaleString()} | ${item.source}</small><br>
+          <a href="${item.link}" target="_blank">View Source</a>
+        </div>
+      `).join("");
+    }
+    loadFeed();
+    setInterval(loadFeed, 600000); // refresh every 10 mins
+  </script>
+</body>
+</html>
